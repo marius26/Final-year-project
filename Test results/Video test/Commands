@@ -1,0 +1,1 @@
+libcamera-vid --width 1456 --height 1088 --denoise cdn_off --shutter 30  --framerate 60 --save-pts /dev/shm/tst.pts -t 60000 -o ~/Desktop/tst.h264 
