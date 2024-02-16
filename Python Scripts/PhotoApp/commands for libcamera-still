@@ -98,3 +98,6 @@ Valid options are:
   --latest arg                          Create a symbolic link with this name to most recent saved file
   --immediate [=arg(=1)] (=0)           Perform first capture immediately, with no preview phase
   --autofocus-on-capture [=arg(=1)] (=0)
+
+
+libcamera-vid -n --codec mjpeg -t 1000 --segment 1 -o /home/pi/test_%04d.jpg --width 4056 --height 3040 --brightness 0.0 --contrast 0.7 --exposure normal --framerate 25 --gain 0 --awb auto --metering centre --saturation 1.0 --sharpness 1.5 --denoise off

@@ -16,7 +16,7 @@ class VideoCaptureApp:
         self.framerate = tk.StringVar(value="55")
         self.duration_sec = tk.StringVar(value="10")  # Default duration in seconds
         self.filename = tk.StringVar(value="video")
-        self.extension = tk.StringVar(value=".mp4")
+        self.extension = tk.StringVar(value=".mkv")
         self.save_directory = tk.StringVar(value=os.path.expanduser("~/Desktop"))
 
         # Create GUI elements
