@@ -1,8 +1,9 @@
-import subprocess
 from picamera2 import Picamera2, Preview
+import sys,os,glob, subprocess, time, keyboard
+  
 
-
-
+    
+    
 def run_libcamera_command():
     command = [
         "libcamera-vid",
@@ -11,13 +12,13 @@ def run_libcamera_command():
         "-t", "10000",
         "--segment", "1",
         "-o", "/home/pi/Final-year-project/Python Scripts/PhotoApp/Test/5sFrameNr-%03d.jpg",
-        "--width", "480",
-        "--height", "360",
+        "--width", "640",
+        "--height", "480",
         "--brightness", "0.0",
         "--contrast", "0.7",
-        #"--exposure", "sport",
+        "--exposure", "sport",
         "--shutter","100",
-        "--framerate", "2",
+        "--framerate", "60",
         "--gain", "0",
         "--awb", "auto",
         "--metering", "centre",
@@ -25,7 +26,7 @@ def run_libcamera_command():
         "--sharpness", "1.5",
         "--flush","1",
         "--denoise", "cdn_off",
-        "--info-text", "#%frame (%fps fps) Exposure %exp",
+        "--info-text", "%frame %fps  %exp",
         "--save-pts","timestampPerFrame.txt",
         "--metadata", "metadata.txt"
     ]
@@ -42,3 +43,4 @@ def run_libcamera_command():
     
 if __name__ == "__main__":
      run_libcamera_command()
+     #     preBuffered_libcamera_command()
