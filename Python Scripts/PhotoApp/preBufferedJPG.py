@@ -1,124 +1,227 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 import time
-import os
-import subprocess
+import os, subprocess
 import signal
 import datetime
 import glob
 import sys
+from gpiozero import Button
+import numpy as np
 import shutil
-import keyboard  # Import the keyboard module
-import os
-import sys
+import pygame
+from pygame.locals import *
 
+#v0.02
 
-
-# Constants and variables
-width = 640  # frame width 
-height = 480   # frame height
-framerate = 60    # fps
-pre_frames = 10    # Number of PRE Frames
+# setup
+width      = 640  # frame width 
+height     = 480   # frame height
+framerate  = 60    # fps
+pre_frames = 5   # Number of PRE Frames
 cap_length = 1000  # in mS
-ram_limit = 150   # in MB, stops if RAM below this
+ram_limit  = 150   # in MB, stops if RAM below this
+
+# specify trigger button
+trigger    = Button(21)
 
 # setup directories
-#pic_dir = "/home/{}/Pictures/".format(os.getlogin())
+Home_Files  = []
+Home_Files.append(os.getlogin())
+pic_dir = "/home/" + Home_Files[0]+ "/Pictures/"
 
-pic_dir = "/home/pi/Desktop/Final-year-project/Python Scripts/PhotoApp".format(os.getlogin())
+# screen setup
+pygame.init()
+width2 = 400
+height2 = 200
+windowSurfaceObj = pygame.display.set_mode((width2, height2), pygame.NOFRAME, 24)
+capture = 0
+
+def text(msg,row,color):
+   global width2,height2
+   fontObj = pygame.font.Font(None,30)
+   msgSurfaceObj = fontObj.render(msg, False, color)
+   msgRectobj = msgSurfaceObj.get_rect()
+   pygame.draw.rect(windowSurfaceObj,(0,0,0),Rect(0,row*30,width2,30))
+   msgRectobj.topleft = (0,row * 30)
+   windowSurfaceObj.blit(msgSurfaceObj, msgRectobj)
+   pygame.display.update()
+
 # clear ram
-print("Clearing RAM...")
+text("Clearing RAM...",0,(128,128,128))
 frames = glob.glob('/run/shm/*.jpg')
-for frame in frames:
-    os.remove(frame)
-
+for tt in range(0,len(frames)):
+    os.remove(frames[tt])
+   
 # start camera with subprocess
-print("Starting Camera...")
-command = "libcamera-vid -n -t 0 --codec mjpeg --segment 1 --framerate {} -o /run/shm/temp_%06d.jpg --width {} --height {}".format(
-    framerate, width, height)
-s = subprocess.Popen(command, shell=True, preexec_fn=os.setsid) #line of code to run the command in subprocess using poppen class
-#creates a subprocess object and atributes it to s
-s.poll() #checks if the subrocess is finished
-while s.poll() is not None:
-    print("waiting...")
-    time.sleep(1)
+text("Starting Camera...",1,(128,128,128))
+command = "libcamera-vid -n -t 0 --codec mjpeg --segment 1 --framerate " + str(framerate) + " -o /run/shm/temp_%06d.jpg --width " + str(width) + " --height " + str(height)
+s = subprocess.Popen(command, shell=True, preexec_fn=os.setsid)
+poll = s.poll()
+while poll != None:
+    text("waiting...")
+    poll = s.poll()
 
-print("Capturing Pre-Frames...")
-while len(glob.glob('/run/shm/temp*.jpg')) < pre_frames:
-    time.sleep(1)
-print("Pre-Frames captured...")
-print("Ready for Trigger.....")
-
-# Main loop
-while True:
-    # Check for trigger key press
-    print("Press 't' to trigger camera...")
-    keyboard.wait('t')
-    print("Triggered...")
-    
-    # Your camera capture logic goes here
-    now = datetime.datetime.now()
-    timestamp = now.strftime("%y%m%d_%H%M%S_%f")
-    
-    # Your capture duration logic goes here
-    # Stop camera subprocess
-    os.killpg(s.pid, signal.SIGTERM)
-
-    # Get date parameters
-    yr, mh, dy = timestamp[:2], timestamp[2:4], timestamp[4:6]
-    hr, mn, sc, ms = map(int, [timestamp[7:9], timestamp[9:11], timestamp[11:13], timestamp[14:21]])
-    dz = timestamp[:6]
-
-    # Get frames list
+text("Capturing Pre-Frames...",2,(128,128,128))
+while len(frames) < pre_frames:
     frames = glob.glob('/run/shm/temp*.jpg')
-    frames.reverse()
-    
-    # Calculate times for file name
-    for x in range(len(frames)):
-        mc = ms + ((x - pre_frames) * int(1000000/framerate))
-        sc2, mn2, hr2 = sc, mn, hr
-        while mc > 999999:
-            sc2 += 1
-            mc -= 1000000
-            if sc2 > 59:
-                sc2 = 0
-                mn2 += 1
-                if mn2 > 59:
-                    hr2 += 1
-                    mn2 = 0
-                    if hr2 > 23:
-                        hr2 = 0
-        while mc < 0:
-            sc2 -= 1
-            mc += 1000000
-            if sc2 < 0:
-                sc2 = 59
-                mn2 -= 1
-                if mn2 < 0:
-                    hr2 -= 1
-                    mn2 = 59
-                    if hr2 < 0:
-                        hr2 = 23
-        md = "00000" + str(mc)
-        mo = str(mn2).zfill(2)
-        sd = str(sc2).zfill(2)
-        hs = str(hr2).zfill(2)
-        timestamp = hs + mo + sd + "_" + str(md)[-6:]
-        if x == pre_frames:
-            trig = timestamp
-        # Rename file to HHMMSS-mmmmmm.jpg
-        if os.path.exists(frames[x]):
-            os.rename(frames[x], frames[x][0:9] + timestamp + '.jpg')
+text("Pre-Frames captured...",3,(128,128,128))
+text("Ready...Press t to capture, ESC to EXIT",4,(0,128,0))
 
-    # Clear ram of temp files
-    print("Clearing temp files from RAM...")
-    for frame in frames:
-        os.remove(frame)
+# check ram
+st = os.statvfs("/run/shm/")
+freeram = (st.f_bavail * st.f_frsize)/1100000
+
+stop = 0
+
+# loop
+while freeram > ram_limit:
     
-    # Move RAM Files to SD card
-    print("Moving files to SD card (/Pictures/DATE)...")
-    if not os.path.exists(pic_dir + dz):
-        os.mkdir(pic_dir + dz)
-    vframes = glob.glob('/run/shm/*.jpg')
-    for frame in vframes:
-        if not os.path.exists(pic_dir + frame[9:]) and frame[:4] != "temp":
-            shutil.move(frame, pic_dir + dz)
+    # check ram and stop if full
+    st = os.statvfs("/run/shm/")
+    freeram = (st.f_bavail * st.f_frsize)/1100000
+        
+    # read temp files
+    frames = glob.glob('/run/shm/temp*.jpg')
+    # DELETE old frames from buffer
+    for tt in range(pre_frames,len(frames)-1):
+        os.remove(frames[tt])
+    
+    # trigger capture
+    if capture == 1:
+        capture = 0
+        now = datetime.datetime.now()
+        timestamp = now.strftime("%y%m%d_%H%M%S_%f")
+        w = len(frames)
+        text("Triggered...",5,(128,128,128))
+        text(timestamp,6,(128,128,128))
+       
+        # capture for cap_length
+        start = time.monotonic()
+        st = os.statvfs("/run/shm/")
+        freeram = (st.f_bavail * st.f_frsize)/1100000
+        while time.monotonic() - start < cap_length/1000 and freeram > ram_limit:
+            st = os.statvfs("/run/shm/")
+            freeram = (st.f_bavail * st.f_frsize)/1100000
+        
+        # stop camera subprocess
+        print (s.pid)
+        print(signal.SIGTERM)
+        os.killpg(s.pid, signal.SIGTERM)
+        
+        # get date parameters 
+        yr = timestamp[0:2]
+        mh = timestamp[2:4]
+        dy = timestamp[4:6]
+        hr = int(timestamp[7:9])
+        mn = int(timestamp[9:11])
+        sc = int(timestamp[11:13])
+        ms = int(timestamp[14:21])
+        dz = timestamp[0:6]
+
+        # get frames list
+        frames = glob.glob('/run/shm/temp*.jpg')
+        frames.reverse()
+       
+        # calculate times for file name
+        for x in range(0,len(frames)):
+            mc = ms + ((x - w) * int(1000000/framerate))
+            sc2 = sc
+            mn2 = mn
+            hr2 = hr
+            while mc > 999999:
+                sc2 += 1
+                mc -= 1000000
+                if sc2 > 59:
+                    sc2 = 0
+                    mn2 += 1
+                    if mn2 > 59:
+                        hr2 += 1
+                        mn2 = 0
+                        if hr2 > 23:
+                            hr2 = 0
+            while mc < 0:
+                sc2 -= 1
+                mc += 1000000
+                if sc2 < 0:
+                    sc2 = 59
+                    mn2 -= 1
+                    if mn2 < 0:
+                        hr2 -= 1
+                        mn2 = 59
+                        if hr2 < 0:
+                            hr2 = 23
+            md = "00000" + str(mc)
+            mo = str(mn2)
+            if len(mo) < 2:
+                mo = "0" + mo
+            sd = str(sc2)
+            if len(sd) < 2:
+                sd = "0" + sd
+            hs = str(hr2)
+            if len(hs) < 2:
+                hs = "0" + hs
+            timestamp = hs + mo + sd + "_" + str(md)[-6:]
+            if x == w:
+                trig = timestamp
+            # rename file to HHMMSS-mmmmmm.jpg
+            if os.path.exists(frames[x]):
+                os.rename(frames[x],frames[x][0:9] + timestamp + '.jpg')
+               #os.rename(frames[x], pic_dir + "Photo_" + str(x+1) + '.jpg')
+
+
+       
+        # clear ram of temp files
+        text("Clearing temp files from RAM...",0,(128,128,128))
+        frames = glob.glob('/run/shm/temp*.jpg')
+        for tt in range(0,len(frames)):
+            os.remove(frames[tt])
+        
+        # move RAM Files to SD card
+        text("Moving files to SD card (/Pictures/DATE)...",1,(128,128,128))
+        if not os.path.exists(pic_dir + dz) :
+            os.system('mkdir ' + pic_dir + dz)
+        vframes = glob.glob('/run/shm/*.jpg')
+        for xx in range(0,len(vframes)):
+            if not os.path.exists(pic_dir + vframes[xx][9:]) and vframes[xx][0:4] != "temp":
+                shutil.move(vframes[xx],pic_dir + dz)
+
+        for d in range(1,7):
+            text(" ",d,(0,0,0))
+        # restart camera with subprocess
+        text("Starting Camera...",1,(128,128,128))
+        command = "libcamera-vid -n -t 0 --codec mjpeg --segment 1 --framerate " + str(framerate) + " -o /run/shm/temp_%06d.jpg --width " + str(width) + " --height " + str(height)
+        s = subprocess.Popen(command, shell=True, preexec_fn=os.setsid)
+        print(preexec_fn)
+        poll = s.poll()
+        while poll != None:
+            text("waiting...")
+            poll = s.poll()
+
+        text("Capturing Pre-Frames...",2,(128,128,128))
+        while len(frames) < pre_frames:
+            frames = glob.glob('/run/shm/temp*.jpg')
+        text("Pre-Frames captured...",3,(128,128,128))
+        text("Ready...Press t to capture, ESC to EXIT",4,(0,128,0))
+
+    # check for key presses
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            key = event.key
+            if key == K_t:
+                capture = 1
+            if key == K_ESCAPE:
+                # stop camera subprocess if running
+                poll = s.poll()
+                if poll == None:
+                    os.killpg(s.pid, signal.SIGTERM)
+                pygame.display.quit()
+                pygame.quit()
+                sys.exit
+              
+# stop if ram full
+poll = s.poll()
+if poll == None:
+   os.killpg(s.pid, signal.SIGTERM)
+pygame.display.quit()
+pygame.quit()
+sys.exit              
