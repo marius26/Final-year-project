@@ -1,2 +1,0 @@
-Specifications for exposure test:
-test 1
