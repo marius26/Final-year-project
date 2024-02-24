@@ -1,0 +1,19 @@
+media-ctl -d /dev/media3 --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/720x540 crop:(0,0)/720x540]" -v
+
+media-ctl -d /dev/media3 --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/640x480 crop:(0,0)/640x480]" -v    this works great
+
+
+use this to crop the sensor to achieve higher framerate
+
+
+Available cameras
+-----------------
+0 : imx219 [3280x2464] (/base/soc/i2c0mux/i2c@1/imx219@10)
+    Modes: 'SRGGB10_CSI2P' : 640x480 [206.65 fps - (1000, 752)/1280x960 crop]
+                             1640x1232 [41.85 fps - (0, 0)/3280x2464 crop]
+                             1920x1080 [47.57 fps - (680, 692)/1920x1080 crop]
+                             3280x2464 [21.19 fps - (0, 0)/3280x2464 crop]
+           'SRGGB8' : 640x480 [206.65 fps - (1000, 752)/1280x960 crop]
+                      1640x1232 [41.85 fps - (0, 0)/3280x2464 crop]
+                      1920x1080 [47.57 fps - (680, 692)/1920x1080 crop]
+                      3280x2464 [21.19 fps - (0, 0)/3280x2464 crop]
