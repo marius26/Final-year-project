@@ -2,6 +2,7 @@ media-ctl -d /dev/media3 --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/720x54
 
 media-ctl -d /dev/media3 --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/640x480 crop:(0,0)/640x480]" -v    this works great
 
+for i in {0..5}; do media-ctl -d /dev/media$i --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/1456x1088 crop:(0,0)/640x480]" -v; [ $? -eq 0 ] && break; done
 
 use this to crop the sensor to achieve higher framerate
 
