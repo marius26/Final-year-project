@@ -20,7 +20,8 @@ def run_libcamera_command():
         "--brightness", "0.1",
         "--contrast", "0.5",
         "--framerate", "60",
-        "--shutter","800",
+        "--shutter","100",
+        #"--exposure","sport",
         "--gain", "0.5",
         "--awb", "auto",
         "--metering", "centre",
@@ -49,11 +50,11 @@ def run_pwm():
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:
-        pi_pwm.ChangeDutyCycle(100)
-        sleep(8/1e6)
+        pi_pwm.ChangeDutyCycle(50)
+       # sleep(8/1e6)
         #sleep(1)
-        pi_pwm.ChangeDutyCycle(0)
-        sleep(6/1e6)
+        #pi_pwm.ChangeDutyCycle(0)
+        #sleep(6/1e6)
         
 
 if __name__ == "__main__":
