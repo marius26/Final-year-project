@@ -47,7 +47,15 @@ def run_pwm():
     ledpin = 35  # PWM pin connected to LED
     GPIO.setmode(GPIO.BOARD)  # set pin numbering system
     GPIO.setup(ledpin, GPIO.OUT)
+<<<<<<< HEAD
     pi_pwm = GPIO.PWM(ledpin, 3000)  # create PWM instance with frequency
+=======
+<<<<<<< HEAD
+    pi_pwm = GPIO.PWM(ledpin, 1000)  # create PWM instance with frequency
+=======
+    pi_pwm = GPIO.PWM(ledpin, 100)  # create PWM instance with frequency
+>>>>>>> a1fa64b49f17a9ac58d2104649c5d4a025ed1312
+>>>>>>> 35377cc176a0c3772f1201dde48312e76abd77c8
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:
