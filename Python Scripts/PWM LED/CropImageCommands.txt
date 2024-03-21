@@ -1,0 +1,4 @@
+libcamera-hello --list-camera
+for i in {0..5}; do media-ctl -d /dev/media$i --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/1456x1088 crop:(0,0)/640x480]" -v; [ $? -eq 0 ] && break; done
+libcamera-hello --list-camera
+for i in {0..5}; do media-ctl -d /dev/media$i --set-v4l2 "'imx296 10-001a':0 [fmt:SBGGR10_1X10/1456x1088 crop:(0,0)/1456x1088]" -v; [ $? -eq 0 ] && break; done

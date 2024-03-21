@@ -8,7 +8,7 @@ from time import sleep
 # Script 1: libcamera-vid
 
 def run_libcamera_command():
-    
+    #full resolution: 1456x1088
     command = [
         "libcamera-vid",
         "-n",
@@ -17,17 +17,17 @@ def run_libcamera_command():
         "--segment", "1",
         "--width","640",
         "--height","480",
-        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED//Photos/640x480-%03d.jpg",
-        "--brightness", "0.1",
-        "--contrast", "0.5",
+        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/640x480-%03d.jpg",
+        #"--brightness", "0.1",
+        #"--contrast", "0.5",
         "--framerate", "60",
         "--shutter","14000",
         #"--exposure","sport",
-        "--gain", "0.5",
-        "--awb", "auto",
-        "--metering", "centre",
-        "--saturation", "1.0",
-        "--sharpness", "1.5",
+        #"--gain", "0.5",
+        #"--awb", "fluorescent",
+        #"--metering", "centre",
+        #"--saturation", "1.0",
+        #"--sharpness", "1.5",
         "--flush", "1",
         "--denoise", "cdn_off",
         "--info-text", "#%frame %fps(fps)  Exposure %exp",
@@ -47,31 +47,24 @@ def run_pwm():
     ledpin = 35  # PWM pin connected to LED
     GPIO.setmode(GPIO.BOARD)  # set pin numbering system
     GPIO.setup(ledpin, GPIO.OUT)
-<<<<<<< HEAD
-    pi_pwm = GPIO.PWM(ledpin, 3000)  # create PWM instance with frequency
-=======
-<<<<<<< HEAD
-    pi_pwm = GPIO.PWM(ledpin, 1000)  # create PWM instance with frequency
-=======
-    pi_pwm = GPIO.PWM(ledpin, 100)  # create PWM instance with frequency
->>>>>>> a1fa64b49f17a9ac58d2104649c5d4a025ed1312
->>>>>>> 35377cc176a0c3772f1201dde48312e76abd77c8
+
+    pi_pwm = GPIO.PWM(ledpin, 5000)  # create PWM instance with frequency
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:
-        on_time_ms =1      
+        on_time_ms = 1
+        
         pi_pwm.ChangeDutyCycle(100)
         sleep(on_time_ms/1e3)
-        #sleep(1)
         pi_pwm.ChangeDutyCycle(0)
         sleep((1/30)-(on_time_ms/1e3))
-       # sleep((off_time_ms)-(on_time_ms/1e3))
+        
         
 
 if __name__ == "__main__":
     # Initialize GPIO
     GPIO.setwarnings(False)  # disable warnings
-    GPIO.setmode(GPIO.BOARD)  # set pin numbering system
+    #GPIO.setmode(GPIO.BOARD)  # set pin numbering system
 
     # Create threads for each script and start them
     libcamera_thread = threading.Thread(target=run_libcamera_command)
