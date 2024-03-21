@@ -8,6 +8,7 @@ from time import sleep
 # Script 1: libcamera-vid
 
 def run_libcamera_command():
+    
     command = [
         "libcamera-vid",
         "-n",
@@ -20,7 +21,7 @@ def run_libcamera_command():
         "--brightness", "0.1",
         "--contrast", "0.5",
         "--framerate", "60",
-        "--shutter","100",
+        "--shutter","14000",
         #"--exposure","sport",
         "--gain", "0.5",
         "--awb", "auto",
@@ -46,15 +47,17 @@ def run_pwm():
     ledpin = 35  # PWM pin connected to LED
     GPIO.setmode(GPIO.BOARD)  # set pin numbering system
     GPIO.setup(ledpin, GPIO.OUT)
-    pi_pwm = GPIO.PWM(ledpin, 100)  # create PWM instance with frequency
+    pi_pwm = GPIO.PWM(ledpin, 3000)  # create PWM instance with frequency
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:
-        pi_pwm.ChangeDutyCycle(50)
-       # sleep(8/1e6)
+        on_time_ms =1      
+        pi_pwm.ChangeDutyCycle(100)
+        sleep(on_time_ms/1e3)
         #sleep(1)
-        #pi_pwm.ChangeDutyCycle(0)
-        #sleep(6/1e6)
+        pi_pwm.ChangeDutyCycle(0)
+        sleep((1/30)-(on_time_ms/1e3))
+       # sleep((off_time_ms)-(on_time_ms/1e3))
         
 
 if __name__ == "__main__":
