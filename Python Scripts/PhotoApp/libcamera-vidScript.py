@@ -1,9 +1,6 @@
 from picamera2 import Picamera2, Preview
 import sys,os,glob, subprocess, time, keyboard
-  
 
-    
-    
 def run_libcamera_command():
     command = [
         "libcamera-vid",
@@ -11,13 +8,13 @@ def run_libcamera_command():
         "--codec", "mjpeg",
         "-t", "1000",
         "--segment", "1",
-        "-o", "/home/pi/Final-year-project/Python Scripts/PhotoApp/Test/NoForceRes-SensorSet_1456x1088-%03d.jpg",
+        "-o", "/home/pi/Final-year-project/Python Scripts/PhotoApp/Test/Default-%03d.jpg",
         #"--width", "640",
         #"--height", "480",
         "--brightness", "0.0",
         "--contrast", "0.7",
         #"--exposure", "sport",
-        "--shutter","16566",
+       # "--shutter","16566",
         "--framerate", "60",
         "--gain", "0",
         "--awb", "auto",
@@ -37,6 +34,7 @@ def run_libcamera_command():
         print("Error running libcamera-vid command:", e)
     except FileNotFoundError:
         print("libcamera-vid command not found. Make sure it is installed and accessible in your system.")
+
 
 
 

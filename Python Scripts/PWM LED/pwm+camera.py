@@ -15,21 +15,22 @@ def run_libcamera_command():
         "--codec", "mjpeg",
         "-t", "1000",
         "--segment", "1",
-        "--width","640",
-        "--height","480",
-        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/640x480-%03d.jpg",
-        #"--brightness", "0.1",
-        #"--contrast", "0.5",
+        "--width","1080",
+        "--height","640",
+        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/1080x640-%03d.bmp",
+        "-v","1",
         "--framerate", "60",
         "--shutter","14000",
         #"--exposure","sport",
         #"--gain", "0.5",
-        #"--awb", "fluorescent",
-        #"--metering", "centre",
+        #"--metering","average",
+        #"--awb", "auto",
+        
         #"--saturation", "1.0",
         #"--sharpness", "1.5",
-        "--flush", "1",
-        "--denoise", "cdn_off",
+        #"--buffer-count","10",
+        #"--flush", "1",
+        #"--denoise", "cdn_off",
         "--info-text", "#%frame %fps(fps)  Exposure %exp",
         "--save-pts", "timestampPerFrame.txt",
         "--metadata", "metadata.txt"
@@ -48,7 +49,7 @@ def run_pwm():
     GPIO.setmode(GPIO.BOARD)  # set pin numbering system
     GPIO.setup(ledpin, GPIO.OUT)
 
-    pi_pwm = GPIO.PWM(ledpin, 5000)  # create PWM instance with frequency
+    pi_pwm = GPIO.PWM(ledpin, 670)  # create PWM instance with frequency
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:

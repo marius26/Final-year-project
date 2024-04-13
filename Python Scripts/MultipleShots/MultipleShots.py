@@ -17,14 +17,6 @@ picam2.preview_configuration.format = "XBGR8888"
 picam2.still_configuration.size = (1600, 1200)
 picam2.still_configuration.size = (1600, 1200)
 
-with picam2.controls as ctrl:
-    ctrl.AnalogueGain = 6.0
-    ctrl.ExposureTime = 60000
-
-ctrls = Controls(picam2)
-ctrls.AnalogueGain = 1.0
-ctrls.ExposureTime = 10000
-picam2.set_controls(ctrls)
 #picam2.set_controls({"ExposureTime":10000, "FrameRate":60})#keep it 10k
 
 #JPEG quality level, where 0 is the worst quality and 95 is best. (default = 90)
@@ -47,7 +39,7 @@ time.sleep(1)
 #start_and_capture_file("filename") is used to capture a single photo
 #check page 44 (6.6.1 of picamera2 library
 #picam2.start_and_capture_file("StartAndCapture.jpg")# a single photo
-picam2.start_and_capture_files("{:d}.jpg",initial_delay=5,delay=0, num_files=10) #10 photos at 0s delay each with a 2 s initial delay
+picam2.start_and_capture_files("{:d}.jpg",initial_delay=0,delay=0, num_files=5) #10 photos at 0s delay each with a 2 s initial delay
 #picam2.start_and_capture_files("StartAndCaptureFiles{:d}.png",initial_delay=0,delay=0, num_files=10)
 
 
