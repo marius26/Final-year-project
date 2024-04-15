@@ -20,7 +20,7 @@ def run_libcamera_command():
         "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/1080x640-%03d.bmp",
         "-v","1",
         "--framerate", "60",
-        "--shutter","14000",
+        "--shutter","14000", #exposure time in microseconds
         #"--exposure","sport",
         #"--gain", "0.5",
         #"--metering","average",
@@ -53,12 +53,11 @@ def run_pwm():
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
 
     while True:
-        on_time_ms = 1
-        
-        pi_pwm.ChangeDutyCycle(100)
-        sleep(on_time_ms/1e3)
-        pi_pwm.ChangeDutyCycle(0)
-        sleep((1/30)-(on_time_ms/1e3))
+        on_time_ms = 1 #store on time in ms for LED         
+        pi_pwm.ChangeDutyCycle(100) #max brightness
+        sleep(on_time_ms/1e3) #hold ON time
+        pi_pwm.ChangeDutyCycle(0) # LED off
+        sleep((1/60)-(on_time_ms/1e3)) #hold OFF time to maintain 60fps
         
         
 
