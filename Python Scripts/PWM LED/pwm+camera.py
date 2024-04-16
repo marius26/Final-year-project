@@ -9,31 +9,10 @@ from time import sleep
 
 def run_libcamera_command():
     #full resolution: 1456x1088
-    command = [
-        "libcamera-vid",
-        "-n",
-        "--codec", "mjpeg",
-        "-t", "1000",
-        "--segment", "1",
-        "--width","1080",
-        "--height","640",
-        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/1080x640-%03d.bmp",
-        "-v","1",
-        "--framerate", "60",
-        "--shutter","14000", #exposure time in microseconds
-        #"--exposure","sport",
-        #"--gain", "0.5",
-        #"--metering","average",
-        #"--awb", "auto",
-        
-        #"--saturation", "1.0",
-        #"--sharpness", "1.5",
-        #"--buffer-count","10",
-        #"--flush", "1",
-        #"--denoise", "cdn_off",
-        "--info-text", "#%frame %fps(fps)  Exposure %exp",
-        "--save-pts", "timestampPerFrame.txt",
-        "--metadata", "metadata.txt"
+    command = [        "libcamera-vid",        "-n",        "--codec", "mjpeg",        "-t", "1000",        "--segment", "1",        "--width","1080",        "--height","640",
+        "-o", "/home/pi/Desktop/Final-year-project/Python Scripts/PWM LED/Photos/1080x640-%03d.bmp",        "-v","1",        "--framerate", "60",        "--shutter","14000", #exposure time in microseconds
+        #"--exposure","sport",        #"--gain", "0.5",        #"--metering","average",        #"--awb", "auto",   #"--saturation", "1.0",       #"--sharpness", "1.5",        #"--buffer-count","10",        #"--flush", "1",        #"--denoise", "cdn_off",
+        "--info-text", "#%frame %fps(fps)  Exposure %exp",        "--save-pts", "timestampPerFrame.txt",        "--metadata", "metadata.txt"
     ]
     try:
         subprocess.run(command, check=True)
@@ -49,9 +28,8 @@ def run_pwm():
     GPIO.setmode(GPIO.BOARD)  # set pin numbering system
     GPIO.setup(ledpin, GPIO.OUT)
 
-    pi_pwm = GPIO.PWM(ledpin, 670)  # create PWM instance with frequency
+    pi_pwm = GPIO.PWM(ledpin, 1000)  # create PWM instance with frequency (Hz)
     pi_pwm.start(0)  # start PWM of required Duty Cycle 
-
     while True:
         on_time_ms = 1 #store on time in ms for LED         
         pi_pwm.ChangeDutyCycle(100) #max brightness
